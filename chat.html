@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Chat Portal da Verdade</title>
+
+<style>
+body {
+    background: #f3f4f6;
+    margin: 0;
+    font-family: Arial;
+}
+
+/* Container centralizado no FabApp */
+#chat {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.msg {
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.user {
+    background: #d1e7ff;
+    align-self: flex-end;
+}
+
+.bot {
+    background: #e9e9e9;
+    align-self: flex-start;
+}
+
+#form {
+    display: flex;
+}
+
+#input {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    margin-left: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #0a84ff;
+    color: white;
+    cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div id="chat">
+<h2 style="text-align: center;">Teologia Portal da Verdade</h2>
+
+<div id="messages"></div>
+
+<form id="form" action="javascript:void(0);">
+    <input id="input" placeholder="Digite sua pergunta..." required type="text" />
+    <button type="submit">Enviar</button>
+</form>
+</div>
+
+<script>
+const API_URL = "https://shrill-king-a2b3portal-ai.portaldaverdadeoficial.workers.dev/perguntar";
+
+document.getElementById("form").onsubmit = async () => {
+
+    let msg = document.getElementById("input").value;
+    addMessage(msg, "user");
+    document.getElementById("input").value = "";
+
+    try {
+        let resposta = await fetch(API_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ pergunta: msg })
+        });
+
+        let dados = await resposta.json();
+        addMessage(dados.resposta, "bot");
+    } catch (erro) {
+        addMessage("Erro ao conectar com a IA.", "bot");
+    }
+};
+
+function addMessage(texto, tipo) {
+    let box = document.createElement("div");
+    box.className = "msg " + tipo;
+    box.innerText = texto;
+    document.getElementById("messages").appendChild(box);
+    document.getElementById("messages").scrollTop = 999999;
+}
+</script>
+
+</body>
+</html>
